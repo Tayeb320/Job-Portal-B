@@ -16,8 +16,7 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@avanti.com',
-            'email' => 'admin@avanti.com',
+            'email' => 'admin@jobportal.com',
             'password' => bcrypt(123456),
             'user_type' => 'admin',
         ]);
