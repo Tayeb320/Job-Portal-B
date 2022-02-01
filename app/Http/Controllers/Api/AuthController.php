@@ -14,6 +14,8 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use DB;
+use Illuminate\Support\Facades\Auth;
+use Session;
 
 class AuthController extends Controller
 {
@@ -23,7 +25,7 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'phone' => 'required',
+//                'phone' => 'required',
                 'password' => 'required',
             ]);
 
@@ -32,7 +34,7 @@ class AuthController extends Controller
                 // return response()->json($validator->errors(), 422);
             }
 
-            $user = User::wherePhone($request->phone)->where('user_type','user')->first();
+            $user = User::wherePhone($request->email)->where('user_type','user')->first();
 
             if (blank($user)) :
                 return $this->responseWithError( 'User not fount', [], 422);
@@ -48,21 +50,25 @@ class AuthController extends Controller
                 return $this->responseWithError('Invalid credential', $validator->errors(), 422);
             endif;
 
-            $credentials = ['phone'=>$request->phone, 'password'=>$request->password];
+            $credentials = ['phone'=>$request->email, 'password'=>$request->password];
 
-            try {
-                if (!$token = JWTAuth::attempt($credentials)) {
-                    return $this->responseWithError('Unable to create token', [], 401);
-                }
-            } catch (JWTException $e) {
-                return $this->responseWithError('Could not create token', [] , 422);
+//            try {
+//                if (!$token = Auth::attempt($credentials)) {
+//                    return $this->responseWithError('Unable to create token', [], 401);
+//                }
+//            } catch (JWTException $e) {
+//                return $this->responseWithError('Could not create token', [] , 422);
+//
+//            }catch (\Exception $e) {
+//                return $this->responseWithError('Something went wrong, please try again', [], 500);
+//            }
+//
+//            $data = $this->getProfile($user);
+//            $data['token'] = $token;
 
-            }catch (\Exception $e) {
-                return $this->responseWithError('Something went wrong, please try again', [], 500);
+            if (Auth::attempt($credentials)) {
+                return redirect()->route('dashboard');
             }
-
-            $data = $this->getProfile($user);
-            $data['token'] = $token;
 
             return $this->responseWithSuccess('Login successfully', $data, 200);
         } catch (\Exception $e){

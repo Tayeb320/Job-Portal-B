@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ApplicantController;
 use App\Http\Controllers\Admin\CommonController;
 use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\JobTypeController;
+use App\Http\Controllers\Api\AuthController as ApiAuthController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
@@ -20,7 +21,7 @@ use App\Http\Controllers\Admin\DashboardController;
 */
 
 Route::get('', [AuthController::class,'form'])->name('login');
-Route::post('/login', [AuthController::class,'login'])->name('login.post');
+Route::post('/login', [ApiAuthController::class,'login'])->name('login.post');
 
 Route::prefix('admin')->middleware(['loginCheck'])->group(function () {
     Route::get('logout', [AuthController::class, 'signOut'])->name('logout');
